@@ -16,3 +16,10 @@ __pycache__/
 # Logs and temp
 *.log
 *.tmp
+
+vectorstore/
+!vectorstore/.gitignore
+
+data/downloads/
+!data/downloads/.gitignore
+
