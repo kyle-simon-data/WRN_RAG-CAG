@@ -21,10 +21,10 @@ files = list_bucket_objects(BUCKET_NAME)
 print(f"Files in bucket: {files}")
 
 # Test downloading and validating files
-os.makedirs('downloads', exist_ok=True)
+os.makedirs('data/downloads', exist_ok=True)
 
 for file_key in files[:3]:  # Fetch first 3 files as samples
-    local_path = os.path.join('downloads', os.path.basename(file_key))
+    local_path = os.path.join('data/downloads', os.path.basename(file_key))
     download_file(BUCKET_NAME, file_key, local_path)
 
     # Simple validation: check if file is non-empty
