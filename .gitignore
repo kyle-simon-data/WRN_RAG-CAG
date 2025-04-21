@@ -1,1 +1,18 @@
-vectorstore/
+.aws/
+.env
+
+
+# Python virtual environment
+chatbot_env/
+
+
+# Bytecode and cache
+__pycache__/
+*.pyc
+
+# Jupyter check
+.ipynb_checkpoints/
+
+# Logs and temp
+*.log
+*.tmp
