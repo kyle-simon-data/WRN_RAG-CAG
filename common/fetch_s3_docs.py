@@ -6,6 +6,14 @@ s3 = boto3.client('s3')
 
 BUCKET_NAME = 'cyberbot-rag-knowledgebase'
 
+#clear old contents of downloads folder
+def clear_downloads_folder(download_dir='data/downloads'):
+    if os.path.exists(download_dir):
+        shutil.rmtree(download_dir)
+    os.makedirs(download_dir, exist_ok=True)
+    print(f"[INFO] Cleared and recreated '{download_dir}'.")
+    
+
 # Function to list objects in the bucket
 def list_bucket_objects(bucket):
     response = s3.list_objects_v2(Bucket=bucket)
