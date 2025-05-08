@@ -4,6 +4,9 @@ from cag.cag_pipeline.cag_generate import generate_cag_response
 from cag.cache.cache_store import CacheStore
 from cag.cache.cache_store_meta import CacheStore, load_cache as seed_cache
 
+def load_cache() -> CacheStore:
+    # Initializes an empty cache — you will later add documents from S3 or elsewhere
+    return CacheStore()
 
 def build_prompt(retrieved_docs: list, query: str) -> str:
     #Build a simple prompt by combining retrieved documents and user query.
