@@ -2,6 +2,8 @@ import os
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
 
 
+#loading cybersecurity docs from s3
+
 def load_local_documents(download_dir='data/downloads'):
     documents = []
     pdf_count = 0
