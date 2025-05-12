@@ -25,6 +25,7 @@ data/downloads/*
 data/local/*
 data/hotpotqa/*.json
 data/hotpotqa/testdocs/*.json
+data/triviaqa/testdocs/*.json
 
 # Allow .gitkeep files to track directory structure
 !data/downloads/.gitkeep
