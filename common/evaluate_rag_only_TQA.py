@@ -17,12 +17,12 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from rag.scripts.rag_generate import generate_rag_response
 
-# Path
+# Paths
 TESTDOCS_DIR = Path("data/triviaqa/testdocs")
-OUTPUT_CSV = Path("evaluation_results_TQA_RAG.csv")
-OUTPUT_JSONL = Path("evaluation_results_TQA_RAG.jsonl")
+OUTPUT_CSV = Path("evaluations/evaluation_results_TQA_RAG.csv")
+OUTPUT_JSONL = Path("evaluations/evaluation_results_TQA_RAG.jsonl")
 
-#Track completed IDs
+# Track completed IDs
 completed_ids = set()
 if OUTPUT_JSONL.exists():
     with open(OUTPUT_JSONL, "r") as f:
