@@ -2,24 +2,11 @@
 
 from cag.cag_pipeline.cag_generate import generate_cag_response
 from cag.cache.cache_store import CacheStore
+from cag.cache.cache_store_meta import CacheStore, load_cache as seed_cache
 
 def load_cache() -> CacheStore:
-    
-    #Initializes and seeds the CacheStore with dummy data
-    #This will later be replaced with documents pulled from s3 bucket
-
-    cache = CacheStore()
-
-    #current dummy docs
-    documents = [
-        "The National Vulnerability Database tracks cybersecurity vulnerabilities.",
-        "Zero-day exploits are attacks on vulnerabilities before the vendor knows about them.",
-        "The CIA triad stands for Confidentiality, Integrity, and Availability.",
-        "WhiteRabbitNeo-7B is a 7-billion parameter language model."
-    ]
-    cache.add_documents(documents)
-
-    return cache
+    # Initializes an empty cache
+    return CacheStore()
 
 def build_prompt(retrieved_docs: list, query: str) -> str:
     #Build a simple prompt by combining retrieved documents and user query.
@@ -47,7 +34,7 @@ def run_query(cache: CacheStore, query: str, top_k: int=3, debug: bool=False) ->
     results = cache.search(query, top_k=top_k)
 
     #extract just the document text (currently going to ingore similarity scores)
-    docs_only = [doc for doc, score in results]
+    docs_only = [text for text, metadata, score in results]
 
     #buidl prompt
     prompt = build_prompt(docs_only, query)
@@ -70,7 +57,8 @@ def run_query(cache: CacheStore, query: str, top_k: int=3, debug: bool=False) ->
 
 #testing with CLI input
 if __name__ == "__main__":
-    cache = load_cache()
+    cache = CacheStore()      #create instance
+    seed_cache(cache)       #load docs
     while True:
         query = input("\nEnter your query (or 'exit' to quit): ")
         if query.lower() == "exit":

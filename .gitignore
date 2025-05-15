@@ -20,6 +20,15 @@ __pycache__/
 vectorstore/
 !vectorstore/.gitignore
 
-data/downloads/
-!data/downloads/.gitignore
+# Ignore contents of data subfolders
+data/downloads/*
+data/local/*
+data/hotpotqa/*.json
+data/hotpotqa/testdocs/*.json
+data/triviaqa/testdocs/*.json
 
+# Allow .gitkeep files to track directory structure
+!data/downloads/.gitkeep
+!data/local/.gitkeep
+!data/hotpotqa/.gitkeep
+!data/hotpotqa/testdocs/.gitkeep
