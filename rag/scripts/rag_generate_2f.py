@@ -22,7 +22,7 @@ def load_rag_components():
     return tokenizer, model, embedding_model, collection
 
 
-def generate_rag_answer(user_query: str, tokenizer, model, embedding_model, collection, k: int = 3, max_new_tokens: int = 256) -> str:
+def generate_rag_answer(user_query: str, tokenizer, model, embedding_model, collection, k: int = 5, max_new_tokens: int = 256) -> str:
     query_embedding = embedding_model.embed_query(user_query)
     results = collection.query(
         query_embeddings=[query_embedding],

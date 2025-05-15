@@ -7,7 +7,7 @@ import numpy as np
 from typing import List, Tuple
 from sentence_transformers import SentenceTransformer
 from langchain_core.documents import Document
-from cag.cag_pipeline.load_local_documents_meta import load_local_documents
+from cag.cag_pipeline.load_local_documents import load_local_documents
 
 class CacheStore:
     def __init__(self, embedder_model_name: str = "all-MiniLM-L6-v2"):
@@ -54,12 +54,13 @@ if __name__ == "__main__":
     docs = load_local_documents()
     cache.add_documents(docs)
     print(f"[INFO] Loaded {len(docs)} documents into cache.")
-
+"""
     # Optional: test a query
-    query = "When was Sean Lennon born?"
+    query = "what is cve-2025-3030?"
     results = cache.search(query, top_k=3)
     for i, (text, meta, score) in enumerate(results):
         print(f"\n[RESULT {i+1}]")
         print(f"Score: {score:.4f}")
         print(f"Text: {text}")
         print(f"Metadata: {meta}")
+"""
