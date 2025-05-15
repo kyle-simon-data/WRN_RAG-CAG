@@ -26,9 +26,15 @@ data/local/*
 data/hotpotqa/*.json
 data/hotpotqa/testdocs/*.json
 data/triviaqa/testdocs/*.json
+data/atomics/*
+data/NVD/*
+data/NVD_cleaned/*
 
 # Allow .gitkeep files to track directory structure
 !data/downloads/.gitkeep
 !data/local/.gitkeep
 !data/hotpotqa/.gitkeep
 !data/hotpotqa/testdocs/.gitkeep
+!data/atomics/.gitkeep
+!data/NVD/.gitkeep
+!data/NVD_cleaned/.gitkeep
