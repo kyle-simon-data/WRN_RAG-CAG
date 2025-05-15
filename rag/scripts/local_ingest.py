@@ -6,7 +6,7 @@ from langchain_community.vectorstores import FAISS
 
 
 def main():
-    print("📁 Loading documents from ./data/")
+    print("Loading documents from ./data/")
     loader = DirectoryLoader("v1_local_ingest/data/", glob="**/*.txt")
     docs = loader.load()
 

@@ -1,7 +1,7 @@
 ### handles loading the CacheStore and managing user query flow.
 
 from cag.cag_pipeline.cag_generate import generate_cag_response
-from cag.cache.cache_store import CacheStore
+#from cag.cache.cache_store import CacheStore
 from cag.cache.cache_store_meta import CacheStore, load_cache as seed_cache
 
 def load_cache() -> CacheStore:
