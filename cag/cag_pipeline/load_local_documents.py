@@ -1,45 +1,95 @@
 import os
+import json
 from langchain_community.document_loaders import PyPDFLoader, TextLoader
+from langchain_core.documents import Document
 
 
-#loading cybersecurity docs from s3
+#loading cybersecurity docs local directory
 
-def load_local_documents(download_dir='data/downloads'):
+def load_local_documents(directory='data/downloads'):
     documents = []
-    pdf_count = 0
-    txt_count = 0
+    counts = {
+        'pdf': 0,
+        'txt': 0,
+        'md': 0,
+        'sh': 0,
+        'json': 0,
+        'total_chunks': 0
+    }
 
-    for filename in os.listdir(download_dir):
-        file_path = os.path.join(download_dir, filename)
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
         if not os.path.isfile(file_path):
             continue
 
+        ext = os.path.splitext(filename)[-1].lower()
+
         try:
-            #handle different types of files
-            if filename.endswith('.pdf'):
+            if ext == '.pdf':
                 loader = PyPDFLoader(file_path)
                 loaded_docs = loader.load()
-                pdf_count += 1
-                print(f"[INFO] Loaded {len(loaded_docs)} pages from PDF: {filename}")
-            elif filename.endswith('.txt'):
+                counts['pdf'] += 1
+                doc_type = 'pdf'
+
+            elif ext in {'.txt', '.md', '.sh'}:
                 loader = TextLoader(file_path, encoding='utf-8')
                 loaded_docs = loader.load()
-                txt_count += 1
-                print(f"[INFO] Loaded 1 text file: {filename}")
-            else:
-                print(f"[INFO] Skipping unsupported file type: {filename}")
+                doc_type = ext.lstrip('.')
+                counts[doc_type] += 1
+
+            elif ext == '.json':
+                with open(file_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+
+                question_id = data.get("id", filename)
+                for title, sentences in data.get("context", []):
+                    for idx, sentence in enumerate(sentences):
+                        documents.append(
+                            Document(
+                                page_content=sentence.strip(),
+                                metadata={
+                                    "source": filename,
+                                    "type": "json",
+                                    "title": title,
+                                    "sentence_id": idx,
+                                    "question_id": question_id
+                                }
+                            )
+                        )
+                        counts['total_chunks'] += 1
+                counts['json'] += 1
                 continue
 
-        #loaded_docs = loader.load()
+            else:
+                continue  # skip unsupported file types
 
-             #each loaded_doc is a Document object with 'page_content' attribute
+            # Wrap non-JSON docs
             for doc in loaded_docs:
-                documents.append(doc.page_content)
+                documents.append(
+                    Document(
+                        page_content=doc.page_content,
+                        metadata={
+                            "source": filename,
+                            "type": doc_type
+                        }
+                    )
+                )
+                counts['total_chunks'] += 1
 
         except Exception as e:
-            print(F"[Error] Failed to load {filename}: {e}")
-                
-    print(f"[INFO] Finished loading documents.")
-    print(f"[INFO] PDFs loaded: {pdf_count}, TXTs loaded: {txt_count}, Total documents: {len(documents)}")
-    
+            print(f"[ERROR] Failed to load {filename}: {e}")
+
+    print(f"[INFO] Finished loading documents:")
+    print(f"  PDFs loaded:   {counts['pdf']}")
+    print(f"  TXTs loaded:   {counts['txt']}")
+    print(f"  MDs loaded:    {counts['md']}")
+    print(f"  JSONs loaded:  {counts['json']}")
+    print(f"  SHs loaded:    {counts['sh']}")
+    print(f"  Total chunks:  {counts['total_chunks']}")
+    print(f"[INFO] Total Document objects: {len(documents)}")
+
     return documents
+
+if __name__ == "__main__":
+    docs = load_local_documents()
+    print(f"[DEBUG] Sample doc:\n{docs[0].page_content[:200]}\nMetadata: {docs[0].metadata}" if docs else "[DEBUG] No documents loaded.")
