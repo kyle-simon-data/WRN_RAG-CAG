@@ -4,7 +4,7 @@ from langchain_community.document_loaders import PyPDFLoader, TextLoader, JSONLo
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_core.documents import Document
 
-def load_local_documents(download_dir='data/downloads', chunk_size=500, chunk_overlap=50, return_with_metadata=False):
+def load_local_documents(download_dir='data/downloads', chunk_size=1000, chunk_overlap=200, return_with_metadata=False):
     """
     Load and chunk documents from the downloads directory.
     

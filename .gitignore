@@ -20,7 +20,8 @@ __pycache__/
 vectorstore/
 !vectorstore/.gitignore
 
-# Ignore contents of data subfolders
+# Ignore contents of subfolders
+benchmark_analysis/*
 data/downloads/*
 data/local/*
 data/hotpotqa/*.json

@@ -27,7 +27,7 @@ def save_cve_record(cve_record, output_dir):
 
 
 def clean_json_files(tobecleaned_directory, cleaned_directory):
-    """Clean and simplify JSON files retrieved from NVD API."""
+    """Clean and simplify JSON files retrieved from NVD API - only keeping descriptions."""
     # Create output directory if it doesn't exist
     if not os.path.exists(cleaned_directory):
         os.makedirs(cleaned_directory)
@@ -46,8 +46,7 @@ def clean_json_files(tobecleaned_directory, cleaned_directory):
                 data = json.load(file)
 
             cleaned_data = {
-                "descriptions": [],
-                "references": data.get("cve", {}).get("references", [])
+                "descriptions": []
             }
             
             # Filter descriptions where lang is "en"
@@ -59,9 +58,6 @@ def clean_json_files(tobecleaned_directory, cleaned_directory):
             # Save cleaned data to new JSON file in the output directory
             with open(output_filepath, 'w', encoding='utf-8') as file:
                 json.dump(cleaned_data, file, indent=4)
-
-
-# These functions have been removed as they were used for extracting exploit URLs
 
 
 def main():
