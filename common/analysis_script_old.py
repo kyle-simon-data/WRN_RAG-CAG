@@ -57,7 +57,7 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         
         ax.set_xlabel('Query')
         ax.set_ylabel('Processing Time (seconds)')
-        ax.set_title('NVD (30 Day Corpus) -- CAG vs RAG Processing Time')
+        ax.set_title('NVD -- CAG vs RAG Processing Time')
         ax.set_xticks(indices)
         ax.set_xticklabels([f"Q{i+1}" for i in indices], rotation=45)
         ax.legend()
@@ -89,7 +89,7 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         
         ax.set_xlabel('Query')
         ax.set_ylabel('Number of Documents Used')
-        ax.set_title('NVD (30 Day Corpus) -- CAG vs RAG Document Usage')
+        ax.set_title('NVD -- CAG vs RAG Document Usage')
         ax.set_xticks(indices)
         ax.set_xticklabels([f"Q{i+1}" for i in indices], rotation=45)
         ax.legend()
@@ -121,7 +121,7 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         
         ax.set_xlabel('Query')
         ax.set_ylabel('Response Length (characters)')
-        ax.set_title('NVD (30 Day Corpus) -- CAG vs RAG Response Length')
+        ax.set_title('NVD -- CAG vs RAG Response Length')
         ax.set_xticks(indices)
         ax.set_xticklabels([f"Q{i+1}" for i in indices], rotation=45)
         ax.legend()
@@ -131,77 +131,17 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         plt.savefig(len_plot_path)
         print(f"Response length comparison saved to: {len_plot_path}")
         
-        # 4. NEW: Response Score Comparison
-        plt.figure(figsize=(12, 6))
-        
-        # Bar plot for response scores
-        ax = plt.subplot(111)
-        
-        # Check if comparison_df has these columns, otherwise get them from cag_df and rag_df
-        if 'cag_response_score' in comparison_df.columns and 'rag_response_score' in comparison_df.columns:
-            cag_scores = comparison_df['cag_response_score']
-            rag_scores = comparison_df['rag_response_score']
-        else:
-            # Assuming queries are in the same order in all dataframes
-            cag_scores = []
-            rag_scores = []
-            for query in comparison_df['query'] if 'query' in comparison_df.columns else range(len(indices)):
-                cag_query_df = cag_df[cag_df['query'] == query] if 'query' in cag_df.columns else cag_df.iloc[query:query+1]
-                rag_query_df = rag_df[rag_df['query'] == query] if 'query' in rag_df.columns else rag_df.iloc[query:query+1]
-                
-                cag_scores.append(float(cag_query_df['response_score'].iloc[0]) if 'response_score' in cag_df.columns else 0)
-                rag_scores.append(float(rag_query_df['response_score'].iloc[0]) if 'response_score' in rag_df.columns else 0)
-        
-        cag_score_bars = ax.bar([i - bar_width/2 for i in indices], 
-                              cag_scores, 
-                              bar_width, 
-                              label='CAG', 
-                              color='mediumseagreen', 
-                              alpha=0.7)
-                              
-        rag_score_bars = ax.bar([i + bar_width/2 for i in indices], 
-                              rag_scores, 
-                              bar_width, 
-                              label='RAG', 
-                              color='mediumpurple', 
-                              alpha=0.7)
-        
-        ax.set_xlabel('Query')
-        ax.set_ylabel('Response Score (0-4)')
-        ax.set_title('NVD (30 Day Corpus) -- CAG vs RAG Response Scores')
-        ax.set_xticks(indices)
-        ax.set_xticklabels([f"Q{i+1}" for i in indices], rotation=45)
-        ax.set_ylim(0, 4.5)  # Setting y-axis limit based on 0-4 score range
-        ax.legend()
-        
-        plt.tight_layout()
-        score_plot_path = os.path.join(output_dir, f'response_score_comparison_{timestamp}.png')
-        plt.savefig(score_plot_path)
-        print(f"Response score comparison saved to: {score_plot_path}")
-        
-    # 5. Summary Statistics
-    # Calculate average response scores
-    cag_avg_score = cag_df['response_score'].mean() if 'response_score' in cag_df.columns else 'N/A'
-    rag_avg_score = rag_df['response_score'].mean() if 'response_score' in rag_df.columns else 'N/A'
-    
+    # 4. Summary Statistics
     summary = {
         'CAG Average Processing Time': cag_df['processing_time'].apply(convert_time_to_seconds).mean(),
         'RAG Average Processing Time': rag_df['processing_time'].apply(convert_time_to_seconds).mean(),
         'CAG Total Processing Time': cag_df['processing_time'].apply(convert_time_to_seconds).sum(),
         'RAG Total Processing Time': rag_df['processing_time'].apply(convert_time_to_seconds).sum(),
-        'CAG Average Response Score': cag_avg_score,
-        'RAG Average Response Score': rag_avg_score,
     }
     
     print("\nSummary Statistics:")
     for key, value in summary.items():
-        if 'Score' in key:
-            if isinstance(value, (int, float)):
-                print(f"{key}: {value:.2f}")
-            else:
-                print(f"{key}: {value}")
-        else:
-            print(f"{key}: {value:.2f}s")
+        print(f"{key}: {value:.2f}s")
     
     # Create summary dataframe and save to CSV
     summary_df = pd.DataFrame([summary])
@@ -209,7 +149,7 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
     summary_df.to_csv(summary_path, index=False)
     print(f"Summary statistics saved to: {summary_path}")
     
-    # 6. Create detailed report with queries
+    # 5. Create detailed report with queries
     report_path = os.path.join(output_dir, f'detailed_analysis_{timestamp}.html')
     
     # Using .format() instead of f-strings for the HTML template to avoid f-string backslash issues
@@ -240,16 +180,12 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
             <p>RAG Average Processing Time: {:.2f}s</p>
             <p>CAG Total Processing Time: {:.2f}s</p>
             <p>RAG Total Processing Time: {:.2f}s</p>
-            <p>CAG Average Response Score: {}</p>
-            <p>RAG Average Response Score: {}</p>
         </div>
     """.format(
         summary['CAG Average Processing Time'],
         summary['RAG Average Processing Time'],
         summary['CAG Total Processing Time'],
-        summary['RAG Total Processing Time'],
-        f"{summary['CAG Average Response Score']:.2f}" if isinstance(summary['CAG Average Response Score'], (int, float)) else summary['CAG Average Response Score'],
-        f"{summary['RAG Average Response Score']:.2f}" if isinstance(summary['RAG Average Response Score'], (int, float)) else summary['RAG Average Response Score']
+        summary['RAG Total Processing Time']
     )
     
     # Add per-query analysis
@@ -267,10 +203,6 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
             cag_docs = str(cag_row['documents']).replace('\n', '<br>')
             rag_docs = str(rag_row['documents']).replace('\n', '<br>')
             
-            # Get response scores if available
-            cag_score = cag_row['response_score'] if 'response_score' in cag_row else 'N/A'
-            rag_score = rag_row['response_score'] if 'response_score' in rag_row else 'N/A'
-            
             # Using format() method instead of f-strings to avoid backslash issues
             query_html = """
             <div class="query-section">
@@ -278,9 +210,6 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
                 
                 <h3>Processing Times</h3>
                 <p>CAG: {2:.2f}s | RAG: {3:.2f}s | Difference: {4:.2f}s</p>
-                
-                <h3>Response Scores</h3>
-                <p>CAG: {11} | RAG: {12}</p>
                 
                 <h3>CAG Response</h3>
                 <div class="response">{5}</div>
@@ -308,9 +237,7 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
                 rag_response,
                 len(rag_response),
                 cag_docs,
-                rag_docs,
-                cag_score,
-                rag_score
+                rag_docs
             )
             
             html_content += query_html

@@ -29,7 +29,7 @@ QUERIES = [
     "As a pentester, my target has a Netgear AX1600 Router. What options do I have for attack vectors?",
 ]
 
-def run_cag_benchmark(output_file="cag_benchmark_results.csv", relevance_threshold=0.3):
+def run_cag_benchmark(output_file="cag_benchmark_results.csv", relevance_threshold=0.6):
     """Run benchmarks for the CAG system and save results to CSV."""
     print(f"Starting CAG benchmark at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
@@ -82,7 +82,7 @@ def run_cag_benchmark(output_file="cag_benchmark_results.csv", relevance_thresho
     print(f"CAG benchmark completed. Results saved to {output_file}")
     return output_file
 
-def run_rag_benchmark(output_file="rag_benchmark_results.csv", relevance_threshold=0.3):
+def run_rag_benchmark(output_file="rag_benchmark_results.csv", relevance_threshold=0.6):
     """Run benchmarks for the RAG system and save results to CSV."""
     print(f"Starting RAG benchmark at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     

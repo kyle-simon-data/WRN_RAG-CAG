@@ -34,7 +34,7 @@ def build_prompt(retrieved_docs: list, query: str) -> str:
     
     return prompt
 
-def run_query(cache: CacheStore, query: str, top_k: int=5, relevance_threshold: float=0.6, max_new_tokens: int=256, debug: bool=False) -> dict:
+def run_query(cache: CacheStore, query: str, top_k: int=5, relevance_threshold: float=0.6, max_new_tokens: int=512, debug: bool=False) -> dict:
     """
     Handles the users' query: search the cache, filter by relevance, pass to LLM, and generate a response.
     Aligned with RAG pipeline behavior for consistent comparison.

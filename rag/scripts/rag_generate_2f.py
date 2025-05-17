@@ -24,7 +24,7 @@ def load_rag_components():
     return tokenizer, model, embedding_model, collection
 
 
-def generate_rag_answer(user_query: str, tokenizer, model, embedding_model, collection, k: int = 5, max_new_tokens: int = 256, relevance_threshold: float = 0.6, debug: bool = False) -> dict:
+def generate_rag_answer(user_query: str, tokenizer, model, embedding_model, collection, k: int = 5, max_new_tokens: int = 512, relevance_threshold: float = 0.6, debug: bool = False) -> dict:
     """
     Generate answers using the RAG pipeline, now returning a dictionary with all components
     similar to the CAG pipeline for better comparison.
