@@ -1,12 +1,12 @@
 import numpy as np
 from typing import List, Tuple
 from sentence_transformers import SentenceTransformer
-from cag.cag_pipeline.load_local_documents import load_local_documents
+from rag1.rag1_pipeline.load_local_documents import load_local_documents
 
-class CacheStore:
+class VectorStore:
     def __init__(self, embedder_model_name: str = "all-MiniLM-L6-v2"):
         """
-        Initialize the CacheStore.
+        Initialize the VectorStore.
         
         Args:
             embedder_model_name (str): Hugging Face model name for embedding.
@@ -53,9 +53,9 @@ class CacheStore:
     def __len__(self):
         return len(self.documents)
     
-def load_cache(cache: CacheStore):
-    #Load docs from local downloads directory into CacheStore
-    print("[INFO] Loading local documents into CacheStore...")
+def load_vectors(vector: VectorStore):
+    #Load docs from local downloads directory into VectorStore
+    print("[INFO] Loading local documents into VectorStore...")
     documents = load_local_documents()
-    cache.add_documents(documents)
-    print(f"[INFO] CacheStore seeded with {len(documents)} documents.")
+    vector.add_documents(documents)
+    print(f"[INFO] VectorStore seeded with {len(documents)} documents.")

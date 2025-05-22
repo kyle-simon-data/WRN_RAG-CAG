@@ -1,14 +1,14 @@
-from cag.cag_pipeline.cag_generate import generate_cag_response
-from cag.cache.cache_store import CacheStore, load_cache as seed_cache
+from rag1.rag1_pipeline.rag1_generate import generate_rag1_response
+from rag1.vector.vector_store import VectorStore, load_vectors as seed_store
 
-def load_cache() -> CacheStore:
+def load_vectors() -> VectorStore:
     # Initializes an empty cache
-    return CacheStore()
+    return VectorStore()
 
 def build_prompt(retrieved_docs: list, query: str) -> str:
     """
     Build a prompt by combining retrieved documents and user query,
-    using the same format as the RAG pipeline.
+    using the same format as the RAG2 pipeline.
     
     Args:
         retrieved_docs (list): List of document texts.
@@ -17,7 +17,7 @@ def build_prompt(retrieved_docs: list, query: str) -> str:
     Returns:
         str: Assembled prompt.
     """
-    # Handle empty document case exactly like RAG
+    # Handle empty document case exactly like RAG2
     if not retrieved_docs:
         return f"<|user|>\n{query}\n<|assistant|>"
     
@@ -34,13 +34,13 @@ def build_prompt(retrieved_docs: list, query: str) -> str:
     
     return prompt
 
-def run_query(cache: CacheStore, query: str, top_k: int=5, relevance_threshold: float=0.6, max_new_tokens: int=512, debug: bool=False) -> dict:
+def run_query(vector: VectorStore, query: str, top_k: int=5, relevance_threshold: float=0.6, max_new_tokens: int=512, debug: bool=False) -> dict:
     """
     Handles the users' query: search the cache, filter by relevance, pass to LLM, and generate a response.
     Aligned with RAG pipeline behavior for consistent comparison.
     
     Args:
-        cache (CacheStore): The cache store containing the documents
+        vector (VectorStore): The vector store containing the documents
         query (str): User's question
         top_k (int): Maximum number of documents to retrieve
         relevance_threshold (float): Minimum similarity score for documents to be included
@@ -50,8 +50,8 @@ def run_query(cache: CacheStore, query: str, top_k: int=5, relevance_threshold: 
     Returns:
         dict: Result containing query, context, prompt, and response
     """
-    # Searching cache
-    results = cache.search(query, top_k=top_k)
+    # Searching vectors
+    results = vector.search(query, top_k=top_k)
     
     # Filter results by relevance threshold - same approach as RAG
     filtered_results = [(text, score) for text, score in results if (1 - score) <= relevance_threshold]
@@ -86,14 +86,14 @@ def run_query(cache: CacheStore, query: str, top_k: int=5, relevance_threshold: 
         print("\n[END DEBUG]\n")
 
     # Generate response with model
-    model_response = generate_cag_response(prompt, max_new_tokens=max_new_tokens)
+    model_response = generate_rag1_response(prompt, max_new_tokens=max_new_tokens)
 
     # Build citations exactly like RAG does
     if filtered_results:
         citation_lines = []
         for i, (doc, score) in enumerate(filtered_results):
             distance = 1 - score
-            # In RAG, this would use metadata - we'll just use Doc ID
+            # In RAG2, this would uses metadata -  Doc ID here
             source = f"Doc {i+1}"
             citation_lines.append(f"[{i+1}] Source: {source} (distance={distance:.2f})")
         
@@ -117,14 +117,14 @@ def run_query(cache: CacheStore, query: str, top_k: int=5, relevance_threshold: 
 
 # Testing with CLI input
 if __name__ == "__main__":
-    cache = CacheStore()      # Create instance
-    seed_cache(cache)         # Load docs
+    vector = VectorStore()      # Create instance
+    seed_store(vector)         # Load docs
     while True:
         query = input("\nEnter your query (or 'exit' to quit): ")
         if query.lower() == "exit":
             break
         
-        result = run_query(cache, query, debug=True)
+        result = run_query(vector, query, debug=True)
         
         print("\nGenerated Answer:\n")
         print(result["final_response"])  # Use the response with citations

@@ -3,9 +3,9 @@ import time
 import argparse
 from datetime import datetime
 
-# Import CAG components
-from cag.cache.cache_store import CacheStore, load_cache as seed_cache
-from cag.cag_pipeline.query_handler import run_query as cag_run_query
+# Import rag1 components
+from rag1.vector.vector_store import VectorStore, load_vectors as seed_store
+from rag1.rag1_pipeline.query_handler import run_query as rag1_run_query
 
 # Import RAG components
 from transformers import AutoTokenizer, AutoModelForCausalLM
@@ -29,9 +29,9 @@ QUERIES = [
     "As a pentester, my target has a Netgear AX1600 Router. What options do I have for attack vectors?",
 ]
 
-def run_cag_benchmark(output_file="cag_benchmark_results.csv", relevance_threshold=0.6):
-    """Run benchmarks for the CAG system and save results to CSV."""
-    print(f"Starting CAG benchmark at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+def run_rag1_benchmark(output_file="rag1_benchmark_results.csv", relevance_threshold=0.6):
+    """Run benchmarks for the rag1 system and save results to CSV."""
+    print(f"Starting rag1 benchmark at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
     # Initialize the cache
     cache = CacheStore()
@@ -45,13 +45,13 @@ def run_cag_benchmark(output_file="cag_benchmark_results.csv", relevance_thresho
         
         # Process each query
         for i, query in enumerate(QUERIES, 1):
-            print(f"[CAG] Processing query {i}/{len(QUERIES)}: {query[:40]}...")
+            print(f"[RAG1] Processing query {i}/{len(QUERIES)}: {query[:40]}...")
             
             # Time the operation
             start_time = time.time()
             
             # Run the query with aligned function
-            result = cag_run_query(cache, query, debug=True, relevance_threshold=relevance_threshold)
+            result = rag1_run_query(cache, query, debug=True, relevance_threshold=relevance_threshold)
             
             # Calculate processing time
             processing_time = time.time() - start_time
@@ -79,7 +79,7 @@ def run_cag_benchmark(output_file="cag_benchmark_results.csv", relevance_thresho
             # Optional: add a small delay between queries
             time.sleep(0.5)
     
-    print(f"CAG benchmark completed. Results saved to {output_file}")
+    print(f"RAG1 benchmark completed. Results saved to {output_file}")
     return output_file
 
 def run_rag_benchmark(output_file="rag_benchmark_results.csv", relevance_threshold=0.6):
@@ -135,16 +135,16 @@ def run_rag_benchmark(output_file="rag_benchmark_results.csv", relevance_thresho
     print(f"RAG benchmark completed. Results saved to {output_file}")
     return output_file
 
-def generate_comparison_report(cag_file, rag_file, output_file="comparison_report.csv"):
-    """Generate a comparison report between CAG and RAG results."""
+def generate_comparison_report(rag1_file, rag_file, output_file="comparison_report.csv"):
+    """Generate a comparison report between RAG1 and RAG2 results."""
     print(f"Generating comparison report...")
     
-    # Read CAG results
-    cag_results = {}
-    with open(cag_file, 'r', encoding='utf-8') as f:
+    # Read RAG1 results
+    RAG1_results = {}
+    with open(rag1_file, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            cag_results[row['query']] = row
+            rag1_results[row['query']] = row
     
     # Read RAG results
     rag_results = {}
@@ -155,72 +155,72 @@ def generate_comparison_report(cag_file, rag_file, output_file="comparison_repor
     
     # Create comparison CSV
     with open(output_file, 'w', newline='', encoding='utf-8') as csvfile:
-        fieldnames = ['query', 'cag_time', 'rag_time', 'time_diff', 
-                     'cag_doc_count', 'rag_doc_count', 'doc_count_diff',
-                     'cag_response_length', 'rag_response_length', 'response_length_diff']
+        fieldnames = ['query', 'rag1_time', 'rag_time', 'time_diff', 
+                     'rag1_doc_count', 'rag_doc_count', 'doc_count_diff',
+                     'rag1_response_length', 'rag_response_length', 'response_length_diff']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         
         for query in QUERIES:
-            cag_row = cag_results.get(query, {})
+            rag1_row = rag1_results.get(query, {})
             rag_row = rag_results.get(query, {})
             
-            if not cag_row or not rag_row:
+            if not rag1_row or not rag_row:
                 continue
                 
             # Extract time
-            cag_time = float(cag_row.get('processing_time', '0s').replace('s', ''))
+            rag1_time = float(rag1_row.get('processing_time', '0s').replace('s', ''))
             rag_time = float(rag_row.get('processing_time', '0s').replace('s', ''))
             
             # Count documents
-            cag_doc_count = int(cag_row.get('documents_used', '0'))
+            rag1_doc_count = int(rag1_row.get('documents_used', '0'))
             rag_doc_count = int(rag_row.get('documents_used', '0'))
             
             # Calculate response lengths
-            cag_response_length = len(cag_row.get('response', ''))
+            rag1_response_length = len(rag1_row.get('response', ''))
             rag_response_length = len(rag_row.get('response', ''))
             
             writer.writerow({
                 'query': query,
-                'cag_time': f"{cag_time:.2f}s",
+                'rag1_time': f"{rag1_time:.2f}s",
                 'rag_time': f"{rag_time:.2f}s",
-                'time_diff': f"{rag_time - cag_time:.2f}s",
-                'cag_doc_count': cag_doc_count,
+                'time_diff': f"{rag_time - rag1_time:.2f}s",
+                'rag1_doc_count': rag1_doc_count,
                 'rag_doc_count': rag_doc_count, 
-                'doc_count_diff': rag_doc_count - cag_doc_count,
-                'cag_response_length': cag_response_length,
+                'doc_count_diff': rag_doc_count - rag1_doc_count,
+                'rag1_response_length': rag1_response_length,
                 'rag_response_length': rag_response_length,
-                'response_length_diff': rag_response_length - cag_response_length
+                'response_length_diff': rag_response_length - rag1_response_length
             })
     
     print(f"Comparison report generated: {output_file}")
     return output_file
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Benchmark CAG and RAG systems')
-    parser.add_argument('--cag-only', action='store_true', help='Run only CAG benchmark')
-    parser.add_argument('--rag-only', action='store_true', help='Run only RAG benchmark')
+    parser = argparse.ArgumentParser(description='Benchmark RAG1 and RAG2 systems')
+    parser.add_argument('--rag1-only', action='store_true', help='Run only RAG1 benchmark')
+    parser.add_argument('--rag2-only', action='store_true', help='Run only RAG2 benchmark')
     parser.add_argument('--relevance', type=float, default=0.6, help='Relevance threshold (default: 0.6)')
     args = parser.parse_args()
     
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    cag_file = f"cag_benchmark_{timestamp}.csv"
+    rag1_file = f"rag1_benchmark_{timestamp}.csv"
     rag_file = f"rag_benchmark_{timestamp}.csv"
     comparison_file = f"comparison_report_{timestamp}.csv"
     
-    if args.cag_only:
-        cag_file = run_cag_benchmark(cag_file, relevance_threshold=args.relevance)
+    if args.rag1_only:
+        rag1_file = run_rag1_benchmark(rag1_file, relevance_threshold=args.relevance)
     elif args.rag_only:
         rag_file = run_rag_benchmark(rag_file, relevance_threshold=args.relevance)
     else:
         # Run both benchmarks
-        print(f"Running both CAG and RAG benchmarks with relevance threshold: {args.relevance}...")
-        cag_file = run_cag_benchmark(cag_file, relevance_threshold=args.relevance)
+        print(f"Running both RAG1 and RAG2 benchmarks with relevance threshold: {args.relevance}...")
+        rag1_file = run_rag1_benchmark(rag1_file, relevance_threshold=args.relevance)
         rag_file = run_rag_benchmark(rag_file, relevance_threshold=args.relevance)
-        generate_comparison_report(cag_file, rag_file, comparison_file)
+        generate_comparison_report(rag1_file, rag_file, comparison_file)
         
         print("\nBenchmark Summary:")
-        print(f"- CAG results: {cag_file}")
+        print(f"- RAG1 results: {rag1_file}")
         print(f"- RAG results: {rag_file}")
         print(f"- Comparison: {comparison_file}")
         print(f"- Relevance threshold used: {args.relevance}")

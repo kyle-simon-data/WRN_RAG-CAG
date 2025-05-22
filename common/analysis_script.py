@@ -5,16 +5,16 @@ import argparse
 import os
 from datetime import datetime
 
-def load_data(cag_file, rag_file, comparison_file=None):
+def load_data(rag1_file, rag2_file, comparison_file=None):
     """Load data from CSV files"""
-    cag_df = pd.read_csv(cag_file)
-    rag_df = pd.read_csv(rag_file)
+    rag1_df = pd.read_csv(rag1_file)
+    rag2_df = pd.read_csv(rag2_file)
     
     comparison_df = None
     if comparison_file and os.path.exists(comparison_file):
         comparison_df = pd.read_csv(comparison_file)
     
-    return cag_df, rag_df, comparison_df
+    return rag1_df, rag2_df, comparison_df
 
 def convert_time_to_seconds(time_str):
     """Convert time string to float seconds"""
@@ -22,7 +22,7 @@ def convert_time_to_seconds(time_str):
         return time_str
     return float(time_str.replace('s', ''))
 
-def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
+def analyze_results(rag1_df, rag2_df, comparison_df, output_dir='.'):
     """Analyze benchmark results and generate visualizations"""
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
     os.makedirs(output_dir, exist_ok=True)
@@ -31,8 +31,8 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
     
     # 1. Processing Time Comparison
     if comparison_df is not None:
-        comparison_df['cag_time_sec'] = comparison_df['cag_time'].apply(convert_time_to_seconds)
-        comparison_df['rag_time_sec'] = comparison_df['rag_time'].apply(convert_time_to_seconds)
+        comparison_df['rag1_time_sec'] = comparison_df['rag1_time'].apply(convert_time_to_seconds)
+        comparison_df['rag2_time_sec'] = comparison_df['rag2_time'].apply(convert_time_to_seconds)
         
         plt.figure(figsize=(8, 6))
         
@@ -41,15 +41,15 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         bar_width = 0.30
         indices = range(len(comparison_df))
         
-        cag_bars = ax.bar([i - bar_width/2 for i in indices], 
-                         comparison_df['cag_time_sec'], 
+        rag1_bars = ax.bar([i - bar_width/2 for i in indices], 
+                         comparison_df['rag1_time_sec'], 
                          bar_width, 
                          label='RAG 1', 
                          color='cornflowerblue', 
                          alpha=0.7)
                          
         rag_bars = ax.bar([i + bar_width/2 for i in indices], 
-                         comparison_df['rag_time_sec'], 
+                         comparison_df['rag2_time_sec'], 
                          bar_width, 
                          label='RAG 2', 
                          color='indianred', 
@@ -73,15 +73,15 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         # Bar plot for document counts
         ax = plt.subplot(111)
         
-        cag_doc_bars = ax.bar([i - bar_width/2 for i in indices], 
-                             comparison_df['cag_doc_count'], 
+        rag1_doc_bars = ax.bar([i - bar_width/2 for i in indices], 
+                             comparison_df['rag1_doc_count'], 
                              bar_width, 
                              label='RAG 1', 
                              color='lightseagreen', 
                              alpha=0.7)
                              
         rag_doc_bars = ax.bar([i + bar_width/2 for i in indices], 
-                             comparison_df['rag_doc_count'], 
+                             comparison_df['rag2_doc_count'], 
                              bar_width, 
                              label='RAG 2', 
                              color='orange', 
@@ -105,15 +105,15 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         # Bar plot for response lengths
         ax = plt.subplot(111)
         
-        cag_len_bars = ax.bar([i - bar_width/2 for i in indices], 
-                             comparison_df['cag_response_length'], 
+        rag1_len_bars = ax.bar([i - bar_width/2 for i in indices], 
+                             comparison_df['rag1_response_length'], 
                              bar_width, 
                              label='RAG 1', 
                              color='royalblue', 
                              alpha=0.7)
                              
         rag_len_bars = ax.bar([i + bar_width/2 for i in indices], 
-                             comparison_df['rag_response_length'], 
+                             comparison_df['rag2_response_length'], 
                              bar_width, 
                              label='RAG 2', 
                              color='gold', 
@@ -137,30 +137,30 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         # Bar plot for response scores
         ax = plt.subplot(111)
         
-        # Check if comparison_df has these columns, otherwise get them from cag_df and rag_df
-        if 'cag_response_score' in comparison_df.columns and 'rag_response_score' in comparison_df.columns:
-            cag_scores = comparison_df['cag_response_score']
-            rag_scores = comparison_df['rag_response_score']
+        # Check if comparison_df has these columns, otherwise get them from rag1_df and rag_df
+        if 'rag1_response_score' in comparison_df.columns and 'rag2_response_score' in comparison_df.columns:
+            rag1_scores = comparison_df['rag1_response_score']
+            rag2_scores = comparison_df['rag2_response_score']
         else:
             # Assuming queries are in the same order in all dataframes
-            cag_scores = []
-            rag_scores = []
+            rag1_scores = []
+            rag2_scores = []
             for query in comparison_df['query'] if 'query' in comparison_df.columns else range(len(indices)):
-                cag_query_df = cag_df[cag_df['query'] == query] if 'query' in cag_df.columns else cag_df.iloc[query:query+1]
-                rag_query_df = rag_df[rag_df['query'] == query] if 'query' in rag_df.columns else rag_df.iloc[query:query+1]
+                rag1_query_df = rag1_df[rag1_df['query'] == query] if 'query' in rag1_df.columns else rag1_df.iloc[query:query+1]
+                rag2_query_df = rag2_df[rag2_df['query'] == query] if 'query' in rag2_df.columns else rag2_df.iloc[query:query+1]
                 
-                cag_scores.append(float(cag_query_df['response_score'].iloc[0]) if 'response_score' in cag_df.columns else 0)
-                rag_scores.append(float(rag_query_df['response_score'].iloc[0]) if 'response_score' in rag_df.columns else 0)
+                rag1_scores.append(float(rag1_query_df['response_score'].iloc[0]) if 'response_score' in rag1_df.columns else 0)
+                rag2_scores.append(float(rag2_query_df['response_score'].iloc[0]) if 'response_score' in rag2_df.columns else 0)
         
-        cag_score_bars = ax.bar([i - bar_width/2 for i in indices], 
-                              cag_scores, 
+        rag1_score_bars = ax.bar([i - bar_width/2 for i in indices], 
+                              rag1_scores, 
                               bar_width, 
                               label='RAG 1', 
                               color='mediumseagreen', 
                               alpha=0.7)
                               
         rag_score_bars = ax.bar([i + bar_width/2 for i in indices], 
-                              rag_scores, 
+                              rag2_scores, 
                               bar_width, 
                               label='RAG 2', 
                               color='mediumpurple', 
@@ -181,16 +181,16 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         
     # 5. Summary Statistics
     # Calculate average response scores
-    cag_avg_score = cag_df['response_score'].mean() if 'response_score' in cag_df.columns else 'N/A'
-    rag_avg_score = rag_df['response_score'].mean() if 'response_score' in rag_df.columns else 'N/A'
+    rag1_avg_score = rag1_df['response_score'].mean() if 'response_score' in rag1_df.columns else 'N/A'
+    rag2_avg_score = rag2_df['response_score'].mean() if 'response_score' in rag2_df.columns else 'N/A'
     
     summary = {
-        'RAG 1 Average Processing Time': cag_df['processing_time'].apply(convert_time_to_seconds).mean(),
-        'RAG 2 Average Processing Time': rag_df['processing_time'].apply(convert_time_to_seconds).mean(),
-        'RAG 1 Total Processing Time': cag_df['processing_time'].apply(convert_time_to_seconds).sum(),
-        'RAG 2 Total Processing Time': rag_df['processing_time'].apply(convert_time_to_seconds).sum(),
-        'RAG 1 Average Response Score': cag_avg_score,
-        'RAG 2 Average Response Score': rag_avg_score,
+        'RAG 1 Average Processing Time': rag1_df['processing_time'].apply(convert_time_to_seconds).mean(),
+        'RAG 2 Average Processing Time': rag2_df['processing_time'].apply(convert_time_to_seconds).mean(),
+        'RAG 1 Total Processing Time': rag1_df['processing_time'].apply(convert_time_to_seconds).sum(),
+        'RAG 2 Total Processing Time': rag2_df['processing_time'].apply(convert_time_to_seconds).sum(),
+        'RAG 1 Average Response Score': rag1_avg_score,
+        'RAG 2 Average Response Score': rag2_avg_score,
     }
     
     print("\nSummary Statistics:")
@@ -253,23 +253,23 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
     )
     
     # Add per-query analysis
-    for i, query in enumerate(cag_df['query'].unique()):
+    for i, query in enumerate(rag1_df['query'].unique()):
         try:
-            cag_row = cag_df[cag_df['query'] == query].iloc[0]
-            rag_row = rag_df[rag_df['query'] == query].iloc[0]
+            rag1_row = rag1_df[rag1_df['query'] == query].iloc[0]
+            rag2_row = rag2_df[rag2_df['query'] == query].iloc[0]
             
-            cag_time = convert_time_to_seconds(cag_row['processing_time'])
-            rag_time = convert_time_to_seconds(rag_row['processing_time'])
+            rag1_time = convert_time_to_seconds(rag1_row['processing_time'])
+            rag2_time = convert_time_to_seconds(rag2_row['processing_time'])
             
             # Fix for float issue - convert to string if needed
-            cag_response = str(cag_row['response'])
-            rag_response = str(rag_row['response'])
-            cag_docs = str(cag_row['documents']).replace('\n', '<br>')
-            rag_docs = str(rag_row['documents']).replace('\n', '<br>')
+            rag1_response = str(rag1_row['response'])
+            rag2_response = str(rag2_row['response'])
+            rag1_docs = str(rag1_row['documents']).replace('\n', '<br>')
+            rag2_docs = str(rag2_row['documents']).replace('\n', '<br>')
             
             # Get response scores if available
-            cag_score = cag_row['response_score'] if 'response_score' in cag_row else 'N/A'
-            rag_score = rag_row['response_score'] if 'response_score' in rag_row else 'N/A'
+            rag1_score = rag1_row['response_score'] if 'response_score' in rag1_row else 'N/A'
+            rag2_score = rag2_row['response_score'] if 'response_score' in rag2_row else 'N/A'
             
             # Using format() method instead of f-strings to avoid backslash issues
             query_html = """
@@ -300,17 +300,17 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
             """.format(
                 i+1,
                 query,
-                cag_time,
-                rag_time,
-                rag_time - cag_time,
-                cag_response,
-                len(cag_response),
-                rag_response,
-                len(rag_response),
-                cag_docs,
-                rag_docs,
-                cag_score,
-                rag_score
+                rag1_time,
+                rag2_time,
+                rag2_time - rag1_time,
+                rag1_response,
+                len(rag1_response),
+                rag2_response,
+                len(rag2_response),
+                rag1_docs,
+                rag2_docs,
+                rag1_score,
+                rag2_score
             )
             
             html_content += query_html
@@ -329,12 +329,12 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Analyze RAG 1 and RAG 2 benchmark results')
-    parser.add_argument('--cag', required=True, help='Path to RAG 1 benchmark CSV')
-    parser.add_argument('--rag', required=True, help='Path to RAG 2 benchmark CSV')
+    parser.add_argument('--rag1', required=True, help='Path to RAG 1 benchmark CSV')
+    parser.add_argument('--rag2', required=True, help='Path to RAG 2 benchmark CSV')
     parser.add_argument('--comparison', help='Path to comparison CSV (optional)')
     parser.add_argument('--output', default='benchmark_analysis', help='Output directory for analysis')
     
     args = parser.parse_args()
     
-    cag_df, rag_df, comparison_df = load_data(args.cag, args.rag, args.comparison)
-    analyze_results(cag_df, rag_df, comparison_df, args.output)
+    rag1_df, rag2_df, comparison_df = load_data(args.rag1, args.rag2, args.comparison)
+    analyze_results(rag1_df, rag2_df, comparison_df, args.output)
