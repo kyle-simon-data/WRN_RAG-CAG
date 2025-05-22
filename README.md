@@ -40,19 +40,6 @@ I chose to use the national vulnerability database managed by NIST and Red Canar
 
 ![image](https://github.com/user-attachments/assets/3d569282-ab8f-42aa-bb85-270f0b9b4cc1)
 
-* How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
-
-## Help
-
-EDITING Any advise for common problems or issues.
-```
-command to run if program contains helper info
-```
-
 ## Authors
 
 Kyle Simon
@@ -60,8 +47,7 @@ ksimon1@umbc.edu
 
 ## Version History
 
-* 0.1
-    * Initial Release
+* Initial Release
 
 ## License
 
