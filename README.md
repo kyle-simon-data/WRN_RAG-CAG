@@ -17,17 +17,29 @@ I chose to use the national vulnerability database managed by NIST and Red Canar
 
 ### Dependencies
 
-EDITING
-* Describe any prerequisites, libraries, OS version, etc., needed before installing program.
-* ex. Windows 10
+- beautifulsoup4
+- boto3
+- botocore
+- chromadb
+- langchain
+- langchain_community
+- langchain_core
+- langchain_huggingface
+- langchain_text_splitters
+- matplotlib
+- numpy
+- pandas
+- Requests
+- seaborn
+- sentence_transformers
+- streamlit
+- torch
+- transformers
 
-### Installing
+### Script Descriptions
 
-* 
+![image](https://github.com/user-attachments/assets/3d569282-ab8f-42aa-bb85-270f0b9b4cc1)
 
-### Executing program
-
-EDITING
 * How to run the program
 * Step-by-step bullets
 ```
@@ -53,14 +65,27 @@ ksimon1@umbc.edu
 
 ## License
 
-STILL EDITING THIS -- This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
+WhiteRabbitNeo License: 
+You agree not to use the Model or Derivatives of the Model:
+
+*In any way that violates any applicable national or international law or regulation or infringes upon the lawful rights and interests of any third party; 
+*For military use in any way;
+*For the purpose of exploiting, harming or attempting to exploit or harm minors in any way; 
+*To generate or disseminate verifiably false information and/or content with the purpose of harming others; 
+*To generate or disseminate inappropriate content subject to applicable regulatory requirements;
+*To generate or disseminate personal identifiable information without due authorization or for unreasonable use; 
+*To defame, disparage or otherwise harass others; 
+*For fully automated decision making that adversely impacts an individual’s legal rights or otherwise creates or modifies a binding, enforceable obligation; 
+*For any use intended to or which has the effect of discriminating against or harming individuals or groups based on online or offline social behavior or known or predicted personal or personality characteristics; 
+*To exploit any of the vulnerabilities of a specific group of persons based on their age, social, physical or mental characteristics, in order to materially distort the behavior of a person pertaining to that group in a manner that causes or is likely to cause that person or another person physical or psychological harm; 
+*For any use intended to or which has the effect of discriminating against individuals or groups based on legally protected characteristics or categories.
+
+Outside of the WhiteRabbitNeo License, feel free to do what you'd like with this-- Open License.
 
 ## Acknowledgments
 
-STILL EDITING THIS
 Inspiration, code snippets, etc.
-* [awesome-readme](https://github.com/matiassingers/awesome-readme)
-* [PurpleBooth](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-* [dbader](https://github.com/dbader/readme-template)
-* [zenorocha](https://gist.github.com/zenorocha/4526327)
-* [fvcproductions](https://gist.github.com/fvcproductions/1bfc2d4aecb01a834b46)
+* [Hugging Face in Action](https://www.manning.com/books/hugging-face-in-action) Great resource for tutorial-style learning 
+* [LangChain in Action](https://www.manning.com/books/langchain-in-action)
+* [Foundational work on CAG](https://github.com/hhhuang/CAG)
+  
