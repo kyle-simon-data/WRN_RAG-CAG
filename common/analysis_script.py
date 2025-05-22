@@ -17,7 +17,7 @@ def load_data(cag_file, rag_file, comparison_file=None):
     return cag_df, rag_df, comparison_df
 
 def convert_time_to_seconds(time_str):
-    """Convert time string like '1.23s' to float seconds"""
+    """Convert time string to float seconds"""
     if not isinstance(time_str, str):
         return time_str
     return float(time_str.replace('s', ''))
@@ -34,30 +34,30 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         comparison_df['cag_time_sec'] = comparison_df['cag_time'].apply(convert_time_to_seconds)
         comparison_df['rag_time_sec'] = comparison_df['rag_time'].apply(convert_time_to_seconds)
         
-        plt.figure(figsize=(12, 6))
+        plt.figure(figsize=(8, 6))
         
         # Bar plot for processing times
         ax = plt.subplot(111)
-        bar_width = 0.35
+        bar_width = 0.30
         indices = range(len(comparison_df))
         
         cag_bars = ax.bar([i - bar_width/2 for i in indices], 
                          comparison_df['cag_time_sec'], 
                          bar_width, 
-                         label='CAG', 
+                         label='RAG 1', 
                          color='cornflowerblue', 
                          alpha=0.7)
                          
         rag_bars = ax.bar([i + bar_width/2 for i in indices], 
                          comparison_df['rag_time_sec'], 
                          bar_width, 
-                         label='RAG', 
+                         label='RAG 2', 
                          color='indianred', 
                          alpha=0.7)
         
         ax.set_xlabel('Query')
         ax.set_ylabel('Processing Time (seconds)')
-        ax.set_title('NVD (30 Day Corpus) -- CAG vs RAG Processing Time')
+        ax.set_title('NVD -- RAG 1 vs RAG 2 Processing Time')
         ax.set_xticks(indices)
         ax.set_xticklabels([f"Q{i+1}" for i in indices], rotation=45)
         ax.legend()
@@ -68,7 +68,7 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         print(f"Processing time comparison saved to: {time_plot_path}")
         
         # 2. Document Count Comparison
-        plt.figure(figsize=(12, 6))
+        plt.figure(figsize=(8, 6))
         
         # Bar plot for document counts
         ax = plt.subplot(111)
@@ -76,20 +76,20 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         cag_doc_bars = ax.bar([i - bar_width/2 for i in indices], 
                              comparison_df['cag_doc_count'], 
                              bar_width, 
-                             label='CAG', 
+                             label='RAG 1', 
                              color='lightseagreen', 
                              alpha=0.7)
                              
         rag_doc_bars = ax.bar([i + bar_width/2 for i in indices], 
                              comparison_df['rag_doc_count'], 
                              bar_width, 
-                             label='RAG', 
+                             label='RAG 2', 
                              color='orange', 
                              alpha=0.7)
         
         ax.set_xlabel('Query')
         ax.set_ylabel('Number of Documents Used')
-        ax.set_title('NVD (30 Day Corpus) -- CAG vs RAG Document Usage')
+        ax.set_title('NVD -- RAG 1 vs RAG 2 Document Usage')
         ax.set_xticks(indices)
         ax.set_xticklabels([f"Q{i+1}" for i in indices], rotation=45)
         ax.legend()
@@ -100,7 +100,7 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         print(f"Document count comparison saved to: {doc_plot_path}")
         
         # 3. Response Length Comparison
-        plt.figure(figsize=(12, 6))
+        plt.figure(figsize=(8, 6))
         
         # Bar plot for response lengths
         ax = plt.subplot(111)
@@ -108,20 +108,20 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         cag_len_bars = ax.bar([i - bar_width/2 for i in indices], 
                              comparison_df['cag_response_length'], 
                              bar_width, 
-                             label='CAG', 
+                             label='RAG 1', 
                              color='royalblue', 
                              alpha=0.7)
                              
         rag_len_bars = ax.bar([i + bar_width/2 for i in indices], 
                              comparison_df['rag_response_length'], 
                              bar_width, 
-                             label='RAG', 
+                             label='RAG 2', 
                              color='gold', 
                              alpha=0.7)
         
         ax.set_xlabel('Query')
         ax.set_ylabel('Response Length (characters)')
-        ax.set_title('NVD (30 Day Corpus) -- CAG vs RAG Response Length')
+        ax.set_title('NVD -- RAG 1 vs RAG 2 Response Length')
         ax.set_xticks(indices)
         ax.set_xticklabels([f"Q{i+1}" for i in indices], rotation=45)
         ax.legend()
@@ -132,7 +132,7 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         print(f"Response length comparison saved to: {len_plot_path}")
         
         # 4. NEW: Response Score Comparison
-        plt.figure(figsize=(12, 6))
+        plt.figure(figsize=(8, 6))
         
         # Bar plot for response scores
         ax = plt.subplot(111)
@@ -155,20 +155,20 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         cag_score_bars = ax.bar([i - bar_width/2 for i in indices], 
                               cag_scores, 
                               bar_width, 
-                              label='CAG', 
+                              label='RAG 1', 
                               color='mediumseagreen', 
                               alpha=0.7)
                               
         rag_score_bars = ax.bar([i + bar_width/2 for i in indices], 
                               rag_scores, 
                               bar_width, 
-                              label='RAG', 
+                              label='RAG 2', 
                               color='mediumpurple', 
                               alpha=0.7)
         
         ax.set_xlabel('Query')
         ax.set_ylabel('Response Score (0-4)')
-        ax.set_title('NVD (30 Day Corpus) -- CAG vs RAG Response Scores')
+        ax.set_title('NVD -- RAG 1 vs RAG 2 Response Scores')
         ax.set_xticks(indices)
         ax.set_xticklabels([f"Q{i+1}" for i in indices], rotation=45)
         ax.set_ylim(0, 4.5)  # Setting y-axis limit based on 0-4 score range
@@ -185,12 +185,12 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
     rag_avg_score = rag_df['response_score'].mean() if 'response_score' in rag_df.columns else 'N/A'
     
     summary = {
-        'CAG Average Processing Time': cag_df['processing_time'].apply(convert_time_to_seconds).mean(),
-        'RAG Average Processing Time': rag_df['processing_time'].apply(convert_time_to_seconds).mean(),
-        'CAG Total Processing Time': cag_df['processing_time'].apply(convert_time_to_seconds).sum(),
-        'RAG Total Processing Time': rag_df['processing_time'].apply(convert_time_to_seconds).sum(),
-        'CAG Average Response Score': cag_avg_score,
-        'RAG Average Response Score': rag_avg_score,
+        'RAG 1 Average Processing Time': cag_df['processing_time'].apply(convert_time_to_seconds).mean(),
+        'RAG 2 Average Processing Time': rag_df['processing_time'].apply(convert_time_to_seconds).mean(),
+        'RAG 1 Total Processing Time': cag_df['processing_time'].apply(convert_time_to_seconds).sum(),
+        'RAG 2 Total Processing Time': rag_df['processing_time'].apply(convert_time_to_seconds).sum(),
+        'RAG 1 Average Response Score': cag_avg_score,
+        'RAG 2 Average Response Score': rag_avg_score,
     }
     
     print("\nSummary Statistics:")
@@ -216,7 +216,7 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
     html_content = """
     <html>
     <head>
-        <title>CAG vs RAG Benchmark Analysis</title>
+        <title>RAG 1 vs RAG 2 Benchmark Analysis</title>
         <style>
             body {{ font-family: Arial, sans-serif; margin: 20px; }}
             h1 {{ color: #2c3e50; }}
@@ -233,23 +233,23 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
         </style>
     </head>
     <body>
-        <h1>CAG vs RAG Benchmark Analysis</h1>
+        <h1>RAG 1 vs RAG 2 Benchmark Analysis</h1>
         <div class="summary">
             <h2>Summary Statistics</h2>
-            <p>CAG Average Processing Time: {:.2f}s</p>
-            <p>RAG Average Processing Time: {:.2f}s</p>
-            <p>CAG Total Processing Time: {:.2f}s</p>
-            <p>RAG Total Processing Time: {:.2f}s</p>
-            <p>CAG Average Response Score: {}</p>
-            <p>RAG Average Response Score: {}</p>
+            <p>RAG 1 Average Processing Time: {:.2f}s</p>
+            <p>RAG 2 Average Processing Time: {:.2f}s</p>
+            <p>RAG 1 Total Processing Time: {:.2f}s</p>
+            <p>RAG 2 Total Processing Time: {:.2f}s</p>
+            <p>RAG 1 Average Response Score: {}</p>
+            <p>RAG 2 Average Response Score: {}</p>
         </div>
     """.format(
-        summary['CAG Average Processing Time'],
-        summary['RAG Average Processing Time'],
-        summary['CAG Total Processing Time'],
-        summary['RAG Total Processing Time'],
-        f"{summary['CAG Average Response Score']:.2f}" if isinstance(summary['CAG Average Response Score'], (int, float)) else summary['CAG Average Response Score'],
-        f"{summary['RAG Average Response Score']:.2f}" if isinstance(summary['RAG Average Response Score'], (int, float)) else summary['RAG Average Response Score']
+        summary['RAG 1 Average Processing Time'],
+        summary['RAG 2 Average Processing Time'],
+        summary['RAG 1 Total Processing Time'],
+        summary['RAG 2 Total Processing Time'],
+        f"{summary['RAG 1 Average Response Score']:.2f}" if isinstance(summary['RAG 1 Average Response Score'], (int, float)) else summary['RAG 1 Average Response Score'],
+        f"{summary['RAG 2 Average Response Score']:.2f}" if isinstance(summary['RAG 2 Average Response Score'], (int, float)) else summary['RAG 2 Average Response Score']
     )
     
     # Add per-query analysis
@@ -277,24 +277,24 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
                 <h2>Query {0}: {1}</h2>
                 
                 <h3>Processing Times</h3>
-                <p>CAG: {2:.2f}s | RAG: {3:.2f}s | Difference: {4:.2f}s</p>
+                <p>RAG 1: {2:.2f}s | RAG 2: {3:.2f}s | Difference: {4:.2f}s</p>
                 
                 <h3>Response Scores</h3>
-                <p>CAG: {11} | RAG: {12}</p>
+                <p>RAG 1: {11} | RAG 2: {12}</p>
                 
-                <h3>CAG Response</h3>
+                <h3>RAG 1 Response</h3>
                 <div class="response">{5}</div>
                 <p class="stats">Length: {6} characters</p>
                 
-                <h3>RAG Response</h3>
+                <h3>RAG 2 Response</h3>
                 <div class="response">{7}</div>
                 <p class="stats">Length: {8} characters</p>
                 
                 <h3>Documents Used</h3>
-                <h4>CAG Documents</h4>
+                <h4>RAG 1 Documents</h4>
                 <div class="document">{9}</div>
                 
-                <h4>RAG Documents</h4>
+                <h4>RAG 2 Documents</h4>
                 <div class="document">{10}</div>
             </div>
             """.format(
@@ -328,9 +328,9 @@ def analyze_results(cag_df, rag_df, comparison_df, output_dir='.'):
     print(f"Detailed HTML report saved to: {report_path}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Analyze CAG and RAG benchmark results')
-    parser.add_argument('--cag', required=True, help='Path to CAG benchmark CSV')
-    parser.add_argument('--rag', required=True, help='Path to RAG benchmark CSV')
+    parser = argparse.ArgumentParser(description='Analyze RAG 1 and RAG 2 benchmark results')
+    parser.add_argument('--cag', required=True, help='Path to RAG 1 benchmark CSV')
+    parser.add_argument('--rag', required=True, help='Path to RAG 2 benchmark CSV')
     parser.add_argument('--comparison', help='Path to comparison CSV (optional)')
     parser.add_argument('--output', default='benchmark_analysis', help='Output directory for analysis')
     
