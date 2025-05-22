@@ -15,7 +15,7 @@ nltk.download('punkt')
 import sys
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from rag.scripts.rag_generate import generate_rag_response
+from rag2.scripts.rag_generate import generate_rag_response
 
 # Paths
 TESTDOCS_DIR = Path("data/triviaqa/testdocs")

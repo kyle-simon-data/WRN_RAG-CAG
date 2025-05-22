@@ -15,7 +15,7 @@ import chromadb
 from langchain_huggingface import HuggingFaceEmbeddings
 import torch
 # Import the generate_rag_answer function from your rag module
-from rag.scripts.rag_generate_2f import generate_rag_answer, load_rag_components
+from rag2.scripts.rag_generate_2f import generate_rag_answer, load_rag_components
 
 # Test queries - replace these with your own 10 queries
 QUERIES = [

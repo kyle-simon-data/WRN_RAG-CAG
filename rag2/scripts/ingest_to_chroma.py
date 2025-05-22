@@ -1,26 +1,3 @@
-"""
-import os
-import json
-import chromadb
-from langchain_community.document_loaders import PyPDFLoader, TextLoader
-from langchain_core.documents import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_huggingface import HuggingFaceEmbeddings
-
-# Define paths
-DOCUMENT_DIR = 'data/downloads'
-CHROMA_DIR = 'vectorstore'
-
-# Initialize embedding model
-embedding_model = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
-
-# Initialize Chroma client and collection
-chroma_client = chromadb.PersistentClient(path=CHROMA_DIR)
-collection = chroma_client.get_or_create_collection("cyberbot-knowledgebase")
-
-# Text splitter
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-"""
 
 import os
 import json

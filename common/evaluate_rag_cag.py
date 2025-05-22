@@ -17,7 +17,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))  #Adds project root to Python path
 
 from cag.cag_pipeline.query_handler_old import load_cache, run_query
-from rag.scripts.rag_generate import generate_rag_response
+from rag2.scripts.rag_generate import generate_rag_response
 
 
 # Paths

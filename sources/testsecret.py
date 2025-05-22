@@ -25,10 +25,10 @@ def test_github_token(token):
     response = requests.get(url, headers=headers)
 
     if response.status_code == 200:
-        print("✅ GitHub token works. User info:")
+        print("GitHub token works. User info:")
         print(response.json())
     else:
-        print(f"❌ Failed to authenticate. Status code: {response.status_code}")
+        print(f"Failed to authenticate. Status code: {response.status_code}")
         print(response.json())
 
 # --- Run ---

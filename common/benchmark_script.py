@@ -13,7 +13,7 @@ import chromadb
 from langchain_huggingface import HuggingFaceEmbeddings
 import torch
 # Import the updated RAG function
-from rag.scripts.rag_generate_2f import generate_rag_answer, load_rag_components
+from rag2.scripts.rag_generate_2f import generate_rag_answer, load_rag_components
 
 # Test queries
 QUERIES = [

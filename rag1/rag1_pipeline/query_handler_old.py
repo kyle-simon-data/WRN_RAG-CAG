@@ -33,25 +33,6 @@ def build_prompt(retrieved_docs: list, query: str) -> str:
     
     return prompt
 
-"""
-def build_prompt(retrieved_docs: list, query: str) -> str:
-    #Build a simple prompt by combining retrieved documents and user query.
-    #Args:
-    #    retrieved_docs (list): List of document texts.
-    #    query (str): User's input
-
-    #Returns:
-    #    str: Assembled prompt.
-
-    prompt = "Context Documents:\n"
-    for idx, doc in enumerate(retrieved_docs):
-        prompt += f"{idx+1}. {doc}\n"
-
-    #prompt += f"\nUser Question:\n{query}\n\nAnswer:"
-    #Trying to force a response from LLM by adding a new line (\n)
-    prompt += f"\nUser Question:\n{query}\n\nAnswer:\n"
-    return prompt
-"""    
 def run_query(cache: CacheStore, query: str, top_k: int=5, relevance_threshold: float=0.6, debug: bool=False) -> dict:
     """
     Handles the users' query: search the cache, filter by relevance, pass to LLM, and generate a response.
@@ -118,37 +99,7 @@ def run_query(cache: CacheStore, query: str, top_k: int=5, relevance_threshold: 
         "all_retrieved": [(text[:100] + "...", score) for text, score in results],
         "used_threshold": relevance_threshold
     }
-"""
-def run_query(cache: CacheStore, query: str, top_k: int=3, debug: bool=False) -> dict:
-    
-    ###Handles the users' query: search the cache, pass to LLM, and generate a response.
 
-    #searching cache
-    results = cache.search(query, top_k=top_k)
-
-    #extract just the document text (currently going to ingore similarity scores)
-   #docs_only = [text for text, metadata, score in results]
-    docs_only = [text for text, score in results]
-
-    #buidl prompt
-    prompt = build_prompt(docs_only, query)
-
-    # Debug: print the assembled prompt before generation
-    if debug:
-        print("\n[DEBUG] Assembled Prompt:\n")
-        print(prompt)
-        print("\n[END DEBUG]\n")
-
-    #Pass this prompt to the LLM for actual reponse/answer generation
-    model_response = generate_cag_response(prompt)
-
-    return {
-        "query": query,
-        "context_passages": docs_only,
-        "assembled_prompt": prompt,
-        "model_response": model_response
-    }
-"""
     
 #testing with CLI input
 if __name__ == "__main__":
